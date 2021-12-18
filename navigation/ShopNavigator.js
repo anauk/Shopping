@@ -4,7 +4,8 @@ import ProductsOverviewScreen from "../screens/shop/ProductsOwerviewScreen";
 import Colors from '../constants/Colors'
 import { Platform } from 'react-native'
 
-const ProductNavigator = createStackNavigator({
+const ProductNavigator = createStackNavigator(
+    {
   ProductsOverview: ProductsOverviewScreen
 }, {
   defaultNavigationOptions: {

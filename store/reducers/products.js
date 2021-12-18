@@ -29,6 +29,8 @@ export  default (state=initialState, action) => {
         ...state,
             availableProducts: state.availableProducts.concat(newProduct)
           }
+    default:
+      return state
   }
-  return state
+
 }

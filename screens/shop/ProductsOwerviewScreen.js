@@ -2,24 +2,26 @@ import React, {useCallback, useEffect, useState} from 'react'
 import {useDispatch, useSelector} from "react-redux";
 import {Text, View, ActivityIndicator, FlatList, StyleSheet, Button} from 'react-native'
 import {fetchProducts} from "../../store/actions/products";
+import ProductItem from "../../components/shop/ProductItem";
 
 
 const ProductsOverviewScreen = props => {
     const [loading, setLoading] = useState(false)
+    const [refreshing, setRefreshing] = useState(false)
     const [error, setError] = useState()
     const products = useSelector(state => state.products.availableProducts)
     const dispatch = useDispatch()
 
     const loadProducts = useCallback(async () => {
         setError(null)
-        setLoading(true)
+        setRefreshing(true)
         try {
             await dispatch(fetchProducts())
         } catch (e) {
             setError(e.message)
         }
-        setLoading(false)
-    }, [dispatch, setLoading, setError])
+        setRefreshing(false)
+    }, [dispatch, setRefreshing, setError])
 
     useEffect(() => {
         const wilFocusSub = props.navigation.addListener('willFocus', loadProducts)
@@ -29,7 +31,10 @@ const ProductsOverviewScreen = props => {
     }, [loadProducts])
 
     useEffect(() => {
-        loadProducts()
+        setLoading(true)
+        loadProducts().then(() => {
+            setLoading(false)
+        })
     }, [dispatch, loadProducts])
 
     const selectItemHandler = (id, title) => {
@@ -56,16 +61,26 @@ const ProductsOverviewScreen = props => {
     }
     return (
         <FlatList
+            onRefresh={loadProducts}
+            refreshing={refreshing}
             data={products}
             keyExtractor={item => item.id}
             renderItem={itemData =>
                 // console.log(itemData, 'itemData')
-                <Text>{itemData.item.title}</Text>
+            <ProductItem
+                image={itemData.item.imageUrl}
+                title={itemData.item.title}
+                price={itemData.item.price}
+                onSelect={() => { selectItemHandler(itemData.item.id,itemData.item.title)}}
+                />
             }
         />
     )
 }
 
+ProductsOverviewScreen.navigationOptions = {
+    headerTitle: 'All Products'
+}
 const styles = StyleSheet.create({
     centered: {
         flex:1,
