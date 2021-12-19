@@ -1,8 +1,11 @@
 import React, {useCallback, useEffect, useState} from 'react'
 import {useDispatch, useSelector} from "react-redux";
-import {Text, View, ActivityIndicator, FlatList, StyleSheet, Button} from 'react-native'
+import {HeaderButtons, Item} from "react-navigation-header-buttons";
+import {Text, View, ActivityIndicator, FlatList, StyleSheet, Button, Platform} from 'react-native'
 import {fetchProducts} from "../../store/actions/products";
 import ProductItem from "../../components/shop/ProductItem";
+import HeaderButton from "../../components/UI/HeaderButton";
+import {Ionicons} from "@expo/vector-icons";
 
 
 const ProductsOverviewScreen = props => {
@@ -38,6 +41,7 @@ const ProductsOverviewScreen = props => {
     }, [dispatch, loadProducts])
 
     const selectItemHandler = (id, title) => {
+        console.log('props', props)
         props.navigation.navigate('ProductDetail', {
             productId: id,
             productTitle: title
@@ -71,16 +75,42 @@ const ProductsOverviewScreen = props => {
                 image={itemData.item.imageUrl}
                 title={itemData.item.title}
                 price={itemData.item.price}
-                onSelect={() => { selectItemHandler(itemData.item.id,itemData.item.title)}}
+                onSelect={() => {selectItemHandler(itemData.item.id, itemData.item.title)}}
                 />
             }
         />
     )
 }
 
-ProductsOverviewScreen.navigationOptions = {
-    headerTitle: 'All Products'
+ProductsOverviewScreen.navigationOptions = navData => {
+    console.log('nD', navData)
+        return {
+        headerTitle: 'All Products',
+        headerLeft: (
+            <HeaderButtons HeaderButtonComponent={HeaderButton}>
+            <Item
+                title='Menu'
+                iconName={Platform.OS === 'ios' ? 'ios-menu' : 'md-menu'}
+                onPress={() => {
+                    navData.navigation.toggleDrawer()
+                }}
+            />
+        </HeaderButtons>
+        ),
+            headerRight: (
+                <HeaderButtons HeaderButtonComponent={HeaderButton}>
+                <Item
+                    title='Cart'
+                    iconName={Platform.OS === 'ios' ? 'ios-cart' : 'md-cart'}
+                    onPress={() => {
+                        navData.navigation.navigate('Cart')
+                    }}
+                />
+            </HeaderButtons>
+            )
+        }
 }
+
 const styles = StyleSheet.create({
     centered: {
         flex:1,

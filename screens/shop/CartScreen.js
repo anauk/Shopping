@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import {FlatList, View, Text, Button} from "react-native";
+import {FlatList, View, Text, Button, StyleSheet} from "react-native";
 import {removeFromCart} from "../../store/actions/cart";
 import {useDispatch, useSelector} from "react-redux";
 import {addOrder} from "../../store/actions/orders";
@@ -55,8 +55,7 @@ const CartScreen = () => {
             <FlatList
                 data={cartItems}
                 keyExtractor={item => item.productId}
-                renderItem={itemData => {
-                    <CartItem
+                renderItem={itemData => <CartItem
                         quantity={itemData.item.quantity}
                         title={itemData.item.productTitle}
                         amount={itemData.item.sum}
@@ -65,10 +64,27 @@ const CartScreen = () => {
                             dispatch(removeFromCart(itemData.item.productId))
                         }}
                     />
-
-                }}
+                }
             />
         </View>
     )
 }
+CartScreen.navigationOptions = {
+    headerTitle: 'Your Cart'
+}
+const styles = StyleSheet.create({
+    screen: {
+
+    },
+    summary: {
+
+    },
+    summaryText: {
+
+    },
+    amount: {
+
+    }
+
+})
 export default CartScreen
